@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="style.css">
+  <title>Projeto de Tecnologia Contemporânea</title>
+</head>
+
+<body>
+
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div>
+        <div>
+          <h1>Projeto de Tecnologia Contemporânea</h1>
+          <h2>Grupo</h2>
+          <ul>
+            <li>Aline Teixeira (Bacharelado)</li>
+            <li>Amanda Queroz (Bacharelado)</li>
+            <li>Daniel Felipe (Bacharelado)</li>
+            <li>Fernanda Groff (Bacharelado)</li>
+            <li>Giovana C. Barbosa (Técnologo)</li>
+          </ul>
+        </div>
+        <div>
+          <h2>Como usar?</h2>
+          <p>Use no seu teclado os números de 1 a 4 para interagir.</p>
+          <ol>
+            <li>Adicionar mais itens;</li>
+            <li>Trocar a forma dos itens;</li>
+            <li>Trocar a cor dos itens;</li>
+            <li>Trocar o lugar dos itens.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  <script>
+    var modal = document.getElementById("myModal");
+    var span = document.getElementsByClassName("close")[0];
+
+    modal.style.display = "block";
+    
+
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+
+    let canvasWidth, canvasHeight;
+    let circles = [];
+    let isBouba = true;
+
+    function reset() {
+      circles = [];
+    }
+
+    function setup() {
+      canvasWidth = windowWidth * 1;
+      canvasHeight = windowHeight * 1;
+      createCanvas(canvasWidth, canvasHeight);
+      noStroke();
+      generateCircle();
+    }
+
+    function draw() {
+      background('rgba(15%,15%,15%,0.1)');
+      for (let i = 0; i < circles.length; i++) {
+        circles[i].display();
+        circles[i].move();
+      }
+      translate(width / 2, height / 2);
+    }
+
+    function generateCircle() {
+      if (circles.length <= 60) {
+        for (let index = 0; index < random(5, 15); index++) {
+          circles.push(new Circle(random(width), random(height)));
+        }
+      } else {
+        for (let i = 0; i < circles.length; i++) {
+          circles[i].x = random(width);
+          circles[i].y = (circles[i].y * (Math.random() < 0.5 ? -1 : 1));
+        }
+      }
+    }
+
+    function keyPressed() {
+      if (keyCode >= 49 && keyCode <= 54) {
+        let num = keyCode - 48;
+        switch (num) {
+          case 1:
+            generateCircle();
+            break;
+          case 2:
+            changeShape();
+            break;
+          case 3:
+            changeColors();
+            break;
+          case 4:
+            changePosition();
+            break;
+        }
+      }
+    }
+
+    function changeShape() {
+      if (isBouba) {
+        isBouba = false;
+      } else {
+        isBouba = true;
+      }
+
+      for (let i = 0; i < circles.length; i++) {
+        circles[i].shape = isBouba;
+      }
+    }
+
+    function changeColors() {
+      for (let i = 0; i < circles.length; i++) {
+        circles[i].color = color(random(255), random(255), random(255), random(20, 80));
+      }
+    }
+
+    function changePosition() {
+      for (let i = 0; i < circles.length; i++) {
+        circles[i].x = random(width);
+        circles[i].y = random(height);
+      }
+      this.changeSpeed();
+    }
+
+    function changeSpeed() {
+      for (let i = 0; i < circles.length; i++) {
+        circles[i].speed = random(-10, 10);
+      }
+    }
+
+    class Circle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = random(20, 50);
+        this.speed = random(-10, 10);
+        this.color = color(random(255), random(255), random(255), random(20, 80));
+        this.shape = isBouba;
+      }
+
+      move() {
+        translate(p5.Vector.fromAngle(millis() / 100, this.speed));
+      }
+
+      display() {
+        fill(this.color);
+        switch (this.shape) {
+          case true:
+            circle(this.x, this.y, (this.size * 5));
+            break;
+          case false:
+            star(this.x, this.y, (this.size), 100, this.size);
+            break;
+        }
+      }
+    }
+
+    function star(x, y, radius1, radius2, npoints) {
+      let angle = TWO_PI / npoints;
+      let halfAngle = angle / 2.0;
+      beginShape();
+      for (let a = 0; a < TWO_PI; a += angle) {
+        let sx = x + cos(a) * radius2;
+        let sy = y + sin(a) * radius2;
+        vertex(sx, sy);
+        sx = x + cos(a + halfAngle) * radius1;
+        sy = y + sin(a + halfAngle) * radius1;
+        vertex(sx, sy);
+      }
+      endShape(CLOSE);
+    }
+  </script>
+</body>
+
+</html>
